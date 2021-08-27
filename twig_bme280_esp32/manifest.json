@@ -17,7 +17,7 @@
     "improv-wifi-mod/*"
   ],
   "modules": {
-    "*": ["./*", "./express-js-mod/*", "$(MODULES)/network/http/*"],
+    "*": ["./*", "./bme280", "./express-js-mod/*", "$(MODULES)/network/http/*"],
     "express-js-mod/*": "./express-js-mod/*",
     "pins/i2c": "$(MODDABLE)/modules/pins/i2c/i2c"
   },

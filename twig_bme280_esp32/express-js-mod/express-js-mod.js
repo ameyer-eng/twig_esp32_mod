@@ -69,6 +69,9 @@ export default class Express {
           this.inboundRequest.rawQuery = parsed.query;
           this.inboundRequest.location = parsed.relative;
           this.inboundRequest.httpMethod = val2.toLowerCase();
+          if(this.inboundRequest.httpMethod === 'head'){
+            this.inboundRequest.httpMethod = 'get'
+          }
           this.inboundRequest.state = "headers";
           break;
         case MessageValue.header:

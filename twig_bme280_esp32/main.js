@@ -2,16 +2,41 @@ import ImprovWifi from "improv-wifi-mod";
 import Timer from "timer";
 import WiFi from "wifi";
 import Preference from "preference";
-import { PREF_WIFI } from 'consts';
 import { fetch } from 'common';
+import SensorServer from "sensor-server";
+import SensorController from "sensor-controller";
+
+import BME280 from 'bme280';
+const PREF_WIFI = "wifi";
+const PREF_ONBOARDING = "onboarding";
+const PREF_OB_STRATEGY = "outbound_strategy";
+const PREF_DEVICE_CONFIG = "device"
+
+const bme280 = new BME280()
+
+bme280.setSensorSettings({
+    osrTemperature: BME280.OVERSAMPLING_2X,
+    osrPressure: BME280.OVERSAMPLING_16X,
+    osrHumidity: BME280.OVERSAMPLING_1X,
+    filter: BME280.FILTER_COEFF_16,
+    standbyTime: BME280.STANDBY_TIME_0_5_MS,
+});
+
+bme280.setSensorMode(BME280.NORMAL_MODE);
 
 class Twig32 {
     #state="initial";
     #bleServer;
     #myWifi = null;
     #httpServer;
+    #sensorController
 
     startBleServer = () => {
+        let name = Preference.get(PREF_DEVICE_CONFIG, "name");
+        if(!name) {
+            name = "jnpr-"+ (Math.random() * 32767)
+            Preference.set(PREF_DEVICE_CONFIG, "name", name);
+        }
         this.#state = "provisioning"
         this.#bleServer = new ImprovWifi({
             deviceName: "Twig32",
@@ -19,7 +44,7 @@ class Twig32 {
         });
     }
 
-    connectToNetwork = ({ssid, password}) => {
+    connectToNetwork = ({ ssid, password }) => {
         Preference.set(PREF_WIFI, "ssid", ssid);
 		Preference.set(PREF_WIFI, "password", password);
         let result = false;
@@ -45,8 +70,6 @@ class Twig32 {
 					break;
 			}
 		});
-    
-        if(result) this.startHttpServer()
 
         return result
     }
@@ -54,7 +77,8 @@ class Twig32 {
     setUp = async () => {
         let firstTime = Preference.get(PREF_ONBOARDING, "first_time");
         if(firstTime) {
-          this.onboardDevice()
+            trace(`first time was true - ${msg}\n`);
+            //   await this.onboardDevice()
         }
         this.startHttpServer()
     }
@@ -70,17 +94,22 @@ class Twig32 {
     }
 
     startHttpServer = () => {
-      this.#httpServer = new SensorServer()
+      this.#httpServer = new SensorServer({ sensor: bme280 })
       this.#httpServer.start()
+      this.#sensorController = new SensorController({ sensor: bme280 })
+      this.#sensorController
+      .startReadings()
       this.#state = 'ready';
-      this.#bleServer.closeConnection();
+      if(this.#bleServer){
+        this.#bleServer.closeConnection();
+      }
     }
 
     run() {
         let ssid = Preference.get(PREF_WIFI, "ssid");
         let password = Preference.get(PREF_WIFI, "password");
         if(ssid && password) {
-            this.connectToNetwork()
+            this.connectToNetwork({ssid, password})
         } else {
             this.startBleServer()
         }

@@ -3,25 +3,14 @@ import Timer from "timer";
 import { Request } from "http";
 import Preference from "preference";
 import SecureSocket from "securesocket";
-import { PREF_OB_STRATEGY } from "consts";
-
-const bme280 = new BME280();
-
-bme280.setSensorSettings({
-  osrTemperature: BME280.OVERSAMPLING_2X,
-  osrPressure: BME280.OVERSAMPLING_16X,
-  osrHumidity: BME280.OVERSAMPLING_1X,
-  filter: BME280.FILTER_COEFF_16,
-  standbyTime: BME280.STANDBY_TIME_0_5_MS,
-});
-
-bme280.setSensorMode(BME280.NORMAL_MODE);
-
+const PREF_OB_STRATEGY = "outbound_strategy";
 export default class SensorController {
   #timer;
   #ob_strategy;
   strategies;
-  constructor() {
+  sensor;
+  constructor({ sensor }) {
+    this.sensor = sensor;
     this.#ob_strategy =
       Preference.get(PREF_OB_STRATEGY, "enabled") || "default";
     this.strategies = {
@@ -33,10 +22,8 @@ export default class SensorController {
     Timer.clear(this.#timer);
   }
   startReadings = () => {
-    this.#timer = Timer.repeat(() => {
-      bme280.update();
+      this.sensor.update();
       this.sendReading();
-    }, 5000);
   };
 
   sendMQTT = () => {};
@@ -61,15 +48,15 @@ export default class SensorController {
           id: 3,
           timestamp: Date.now(),
           readings: [
-            { name: "temp", value: bme280.temperature.toFixed(2), unit: "F" },
+            { name: "temp", value: this.sensor.temperature.toFixed(2), unit: "F" },
             {
               name: "humidity",
-              value: bme280.humidity.toFixed(2),
+              value: this.sensor.humidity.toFixed(2),
               unit: "%",
             },
             {
               name: "pressure",
-              value: bme280.pressure.toFixed(2),
+              value: this.sensor.pressure.toFixed(2),
               unit: "kPa",
             },
           ],
@@ -80,6 +67,8 @@ export default class SensorController {
     });
 
     request.callback = function (message, value, val2) {
+      trace(message, value, val2)
+      trace('\n')
       return null;
     };
   };

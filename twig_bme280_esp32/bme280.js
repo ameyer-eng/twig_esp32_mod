@@ -54,7 +54,7 @@ class BME280 extends I2C {
     dig_H6: 0,
   };
 
-  constructor(dictionary = { address: I2C_ADDR_PRIM, sda: 0, scl: 2 }) {
+  constructor(dictionary = { address: I2C_ADDR_PRIM, sda: 22, scl: 23 }) {
     super(dictionary);
     dictionary.sca = 0;
     dictionary.scd = 2;
