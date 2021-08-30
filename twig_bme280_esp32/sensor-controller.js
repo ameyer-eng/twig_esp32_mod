@@ -22,8 +22,10 @@ export default class SensorController {
     Timer.clear(this.#timer);
   }
   startReadings = () => {
+    this.#timer = Timer.repeat(() => {
       this.sensor.update();
       this.sendReading();
+    }, 8000)
   };
 
   sendMQTT = () => {};
@@ -31,22 +33,17 @@ export default class SensorController {
   sendReading = () => {
     return this.strategies[this.#ob_strategy]();
   };
-
   sendHttpRequest = () => {
     let request = new Request({
-      host: "mhae6j67m0.execute-api.us-west-2.amazonaws.com",
+      host: "d4loldtp14yxm.cloudfront.net",
       path: "/test/streams/sensor-stream/record",
       method: "PUT",
-      Socket: SecureSocket,
-      secure: {
-        protocolVersion: 0x303,
-      },
-      port: 443,
+      port: 80,
       headers: ["Content-Type", "application/json"],
       body: JSON.stringify({
         Data: {
           id: 3,
-          timestamp: Date.now(),
+          timestamp: Date.now() / 1000,
           readings: [
             { name: "temp", value: this.sensor.temperature.toFixed(2), unit: "F" },
             {

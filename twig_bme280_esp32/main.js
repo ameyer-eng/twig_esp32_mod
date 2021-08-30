@@ -5,6 +5,8 @@ import Preference from "preference";
 import { fetch } from 'common';
 import SensorServer from "sensor-server";
 import SensorController from "sensor-controller";
+import Client from "mqtt";
+import Net from "net";
 
 import BME280 from 'bme280';
 const PREF_WIFI = "wifi";
@@ -30,6 +32,7 @@ class Twig32 {
     #myWifi = null;
     #httpServer;
     #sensorController
+    #mqtt = null
 
     startBleServer = () => {
         let name = Preference.get(PREF_DEVICE_CONFIG, "name");
@@ -38,10 +41,10 @@ class Twig32 {
             Preference.set(PREF_DEVICE_CONFIG, "name", name);
         }
         this.#state = "provisioning"
-        this.#bleServer = new ImprovWifi({
-            deviceName: "Twig32",
-            onCredentialsRecieved: this.connectToNetwork
-        });
+        // this.#bleServer = new ImprovWifi({
+        //     deviceName: "Twig32",
+        //     onCredentialsRecieved: this.connectToNetwork
+        // });
     }
 
     connectToNetwork = ({ ssid, password }) => {
@@ -94,15 +97,38 @@ class Twig32 {
     }
 
     startHttpServer = () => {
-      this.#httpServer = new SensorServer({ sensor: bme280 })
-      this.#httpServer.start()
+    //   this.#httpServer = new SensorServer({ sensor: bme280 })
+    //   this.#httpServer.start()
       this.#sensorController = new SensorController({ sensor: bme280 })
-      this.#sensorController
-      .startReadings()
+      this.#sensorController.startReadings()
+      this.startMqtt()
       this.#state = 'ready';
+      
       if(this.#bleServer){
         this.#bleServer.closeConnection();
       }
+    }
+
+    startMqtt =() => {
+        this.#mqtt  = new Client({
+            host: "hornet.rmq.cloudamqp.com",
+            id: "moddable_" + Net.get("MAC"),
+            user: "dmwibehq:dmwibehq",
+            password: "HC7iX99_CQ3x6RaRj9QkxNYNCwg_ePHn"
+        });
+
+        this.#mqtt.onReady = function () {
+            trace("connection established\n");
+            this.subscribe("test/example");
+        }
+
+        this.#mqtt.onMessage = function(topic, data) {
+            trace(`received message on topic "${topic} ${String.fromArrayBuffer(data)}"\n`);
+        }
+
+        this.#mqtt.onClose = function() {
+            trace("connection lost\n");
+        }
     }
 
     run() {

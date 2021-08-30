@@ -6,6 +6,7 @@
     "$(MODULES)/network/mdns/manifest.json",
     "$(MODDABLE)/modules/crypt/tls.json",
     "$(MODDABLE)/modules/pins/i2c/manifest.json",
+    "$(MODDABLE)/modules/network/mqtt/manifest.json",
     "./express-js-mod/manifest.json",
     "./improv-wifi-mod/manifest.json"
   ],
