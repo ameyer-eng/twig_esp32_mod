@@ -1,0 +1,36 @@
+{
+ "build": {
+  "SDKCONFIGPATH": "../sdkconfig"
+  },
+  "include": [
+    "$(MODDABLE)/examples/manifest_base.json",
+    "$(MODDABLE)/examples/manifest_net.json",
+    "$(MODULES)/files/preference/manifest.json",
+    "$(MODULES)/network/mdns/manifest.json",
+    "$(MODDABLE)/modules/crypt/tls.json",
+    "$(MODDABLE)/modules/pins/i2c/manifest.json",
+    "$(MODDABLE)/modules/network/mqtt/manifest.json",
+    "./express-js-mod/manifest.json",
+    "./improv-wifi-mod/manifest.json"
+  ],
+  "preload": [
+    "http",
+    "express-js-mod/*",
+    "btutils",
+    "gap",
+    "improv-wifi-mod/*"
+  ],
+  "modules": {
+    "*": ["./*", "./bme280", "./express-js-mod/*", "$(MODULES)/network/http/*"],
+    "express-js-mod/*": "./express-js-mod/*",
+    "pins/i2c": "$(MODDABLE)/modules/pins/i2c/i2c"
+  },
+  "ble": {
+    "*": ["./improv-wifi-mod/bleservices/*"]
+  },
+  "resources": {
+    "*": [
+      "$(MODULES)/crypt/data/ca222"
+    ]
+  }
+}

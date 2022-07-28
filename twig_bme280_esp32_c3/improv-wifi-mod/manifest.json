@@ -1,0 +1,18 @@
+{
+    "include": [
+      "$(MODDABLE)/examples/manifest_base.json",
+      "$(MODDABLE)/examples/manifest_net.json",
+      "$(MODDABLE)/modules/network/ble/manifest_server.json"
+    ],
+    "preload": [
+		  "improv-wifi-mod",
+      "btutils",
+		  "gap",
+      "./bleservices/*"
+	  ],
+    "modules": {
+      "*": [
+        "./*"
+      ]
+    }
+  }

@@ -1,0 +1,13 @@
+{
+    "preload": [
+		  "helpers/*",
+		  "express-js-mod",
+		  "http"
+ 	  ],
+    "modules": {
+      "*": [
+        "./*"
+      ],
+      "helpers/*": "./helpers/*"
+    }
+  }
