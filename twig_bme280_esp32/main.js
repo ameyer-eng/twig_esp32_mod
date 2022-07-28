@@ -8,25 +8,26 @@ import SensorController from "sensor-controller";
 import Client from "mqtt";
 import Net from "net";
 
-import BME280 from 'bme280';
+//import BME280 from 'bme280';
 const PREF_WIFI = "wifi";
 const PREF_ONBOARDING = "onboarding";
 const PREF_OB_STRATEGY = "outbound_strategy";
 const PREF_DEVICE_CONFIG = "device"
 
-const bme280 = new BME280()
+//const bme280 = new BME280()
 
-bme280.setSensorSettings({
-    osrTemperature: BME280.OVERSAMPLING_2X,
-    osrPressure: BME280.OVERSAMPLING_16X,
-    osrHumidity: BME280.OVERSAMPLING_1X,
-    filter: BME280.FILTER_COEFF_16,
-    standbyTime: BME280.STANDBY_TIME_0_5_MS,
-});
+//bme280.setSensorSettings({
+//  osrTemperature: BME280.OVERSAMPLING_2X,
+//  osrPressure: BME280.OVERSAMPLING_16X,
+//  osrHumidity: BME280.OVERSAMPLING_1X,
+//  filter: BME280.FILTER_COEFF_16,
+//  standbyTime: BME280.STANDBY_TIME_0_5_MS,
+//});
 
-bme280.setSensorMode(BME280.NORMAL_MODE);
+//bme280.setSensorMode(BME280.NORMAL_MODE);
 
 class Twig32 {
+
     #state="initial";
     #bleServer;
     #myWifi = null;
@@ -41,10 +42,10 @@ class Twig32 {
             Preference.set(PREF_DEVICE_CONFIG, "name", name);
         }
         this.#state = "provisioning"
-        // this.#bleServer = new ImprovWifi({
-        //     deviceName: "Twig32",
-        //     onCredentialsRecieved: this.connectToNetwork
-        // });
+         this.#bleServer = new ImprovWifi({
+             deviceName: "Twig32",
+             onCredentialsRecieved: this.connectToNetwork
+         });
     }
 
     connectToNetwork = ({ ssid, password }) => {
@@ -99,11 +100,11 @@ class Twig32 {
     startHttpServer = () => {
     //   this.#httpServer = new SensorServer({ sensor: bme280 })
     //   this.#httpServer.start()
-      this.#sensorController = new SensorController({ sensor: bme280 })
-      this.#sensorController.startReadings()
+//      this.#sensorController = new SensorController({ sensor: bme280 })
+//      this.#sensorController.startReadings()
       this.startMqtt()
       this.#state = 'ready';
-      
+
       if(this.#bleServer){
         this.#bleServer.closeConnection();
       }
