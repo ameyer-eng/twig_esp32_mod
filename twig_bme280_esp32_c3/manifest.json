@@ -31,15 +31,15 @@
 			"i2c": {
 				"interface": { "I2C": 0 },
 				"sda": { "pin": 11, "port": "gpioPortC", "location": 16 },
-				"scl": { "pin": 10, "port": "gpioPortC", "location": 14 },
+				"scl": { "pin": 10, "port": "gpioPortC", "location": 14 }
 			},
 			"debugger": {
 				"interface": { "USART": 0 },
 				"location": 5,
 				"tx" : { "pin": 0, "port": "gpioPortC" },
-				"rx" : { "pin": 1, "port": "gpioPortC" },
-			},
-		},
+				"rx" : { "pin": 1, "port": "gpioPortC" }
+			}
+		}
 	},
  "config": {
 		"led": {
@@ -53,11 +53,11 @@
 			 "sda_pin": 4,
 			 "scl_pin": 5
 		  }
-  }
+  },
   "modules": {
     "*": ["./*", "./bme280", "./express-js-mod/*", "$(MODULES)/network/http/*"],
     "express-js-mod/*": "./express-js-mod/*",
-    "../modules/led",
+    
     "pins/i2c": "$(MODDABLE)/modules/pins/i2c/i2c",
    	"setup/target": "./setup-target"
   },
@@ -69,4 +69,4 @@
       "$(MODULES)/crypt/data/ca222"
     ]
   }
-}
+}}
