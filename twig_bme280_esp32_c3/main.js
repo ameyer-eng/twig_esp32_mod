@@ -8,23 +8,23 @@ import SensorController from "sensor-controller";
 import Client from "mqtt";
 import Net from "net";
 
-import BME280 from 'bme280';
+//import BME280 from 'bme280';
 const PREF_WIFI = "wifi";
 const PREF_ONBOARDING = "onboarding";
 const PREF_OB_STRATEGY = "outbound_strategy";
 const PREF_DEVICE_CONFIG = "device"
 
-const bme280 = new BME280()
+//const bme280 = new BME280()
 
-bme280.setSensorSettings({
-    osrTemperature: BME280.OVERSAMPLING_2X,
-    osrPressure: BME280.OVERSAMPLING_16X,
-    osrHumidity: BME280.OVERSAMPLING_1X,
-    filter: BME280.FILTER_COEFF_16,
-    standbyTime: BME280.STANDBY_TIME_0_5_MS,
-});
+// bme280.setSensorSettings({
+//     osrTemperature: BME280.OVERSAMPLING_2X,
+//     osrPressure: BME280.OVERSAMPLING_16X,
+//     osrHumidity: BME280.OVERSAMPLING_1X,
+//     filter: BME280.FILTER_COEFF_16,
+//     standbyTime: BME280.STANDBY_TIME_0_5_MS,
+// });
 
-bme280.setSensorMode(BME280.NORMAL_MODE);
+//bme280.setSensorMode(BME280.NORMAL_MODE);
 
 class Twig32 {
     #state="initial";
@@ -156,3 +156,4 @@ function doRestart() {
     Timer.delay(1000);
     restart();
 }
+
