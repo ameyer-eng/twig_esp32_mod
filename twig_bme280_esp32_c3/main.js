@@ -8,23 +8,36 @@ import SensorController from "sensor-controller";
 import Client from "mqtt";
 import Net from "net";
 
-//import BME280 from 'bme280';
+import BME280 from 'bme280';
 const PREF_WIFI = "wifi";
 const PREF_ONBOARDING = "onboarding";
 const PREF_OB_STRATEGY = "outbound_strategy";
-const PREF_DEVICE_CONFIG = "device"
+const PREF_DEVICE_CONFIG = "device";
+//variable for sensor status 
+let twigBme280_status = "unknown";
 
-//const bme280 = new BME280()
+try {
+    const bme280 = new BME280();
+    twigBme280_status = "connected"; 
+}
+catch(err)
+{
+    trace('bme280 sensor not detected.');
+    twigBme280_status = "UNDETECTED";
+}
 
-// bme280.setSensorSettings({
-//     osrTemperature: BME280.OVERSAMPLING_2X,
-//     osrPressure: BME280.OVERSAMPLING_16X,
-//     osrHumidity: BME280.OVERSAMPLING_1X,
-//     filter: BME280.FILTER_COEFF_16,
-//     standbyTime: BME280.STANDBY_TIME_0_5_MS,
-// });
+if(twigBme280_status==='connected')
+{
+    bme280.setSensorSettings({
+    osrTemperature: BME280.OVERSAMPLING_2X,
+    osrPressure: BME280.OVERSAMPLING_16X,
+    osrHumidity: BME280.OVERSAMPLING_1X,
+    filter: BME280.FILTER_COEFF_16,
+    standbyTime: BME280.STANDBY_TIME_0_5_MS,
+    });
+    bme280.setSensorMode(BME280.NORMAL_MODE);
+}
 
-//bme280.setSensorMode(BME280.NORMAL_MODE);
 
 class Twig32 {
     #state="initial";
