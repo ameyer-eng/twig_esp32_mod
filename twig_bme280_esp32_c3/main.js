@@ -148,14 +148,13 @@ class Twig32 {
         let ssid = Preference.get(PREF_WIFI, "ssid");
         let password = Preference.get(PREF_WIFI, "password");
         
-        //commented out below to force BLE server to start...
-        //and not use wifi ssid and pwd
-        //////////////////////////////////////////////
-        //if(ssid && password) {
-        //    this.connectToNetwork({ssid, password})
-       // } else {
+
+
+        if(ssid && password) {
+           this.connectToNetwork({ssid, password})
+        } else {
             this.startBleServer()
-       // }
+        }
     }
 }
 
