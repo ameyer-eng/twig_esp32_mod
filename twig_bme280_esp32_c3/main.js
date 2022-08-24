@@ -9,6 +9,8 @@ import Client from "mqtt";
 import Net from "net";
 
 import BME280 from 'bme280';
+//import { trace } from "console";
+//import { trace } from "console";
 const PREF_WIFI = "wifi";
 const PREF_ONBOARDING = "onboarding";
 const PREF_OB_STRATEGY = "outbound_strategy";
@@ -16,13 +18,15 @@ const PREF_DEVICE_CONFIG = "device";
 //variable for sensor status 
 let twigBme280_status = "unknown";
 
+let bme280 = null;
 try {
-    const bme280 = new BME280();
+    bme280 = new BME280();
     twigBme280_status = "connected"; 
+    trace('bme280 sensor status is: ' + twigBme280_status + '\n');
 }
 catch(err)
 {
-    trace('bme280 sensor not detected.');
+    trace('bme280 sensor not detected.' + err + '\n');
     twigBme280_status = "UNDETECTED";
 }
 
@@ -110,12 +114,19 @@ class Twig32 {
     }
 
     startHttpServer = () => {
-      this.#httpServer = new SensorServer({ sensor: bme280 })
-      this.#httpServer.start()
-      this.#sensorController = new SensorController({ sensor: bme280 })
-      this.#sensorController.startReadings()
-      this.startMqtt()
-      this.#state = 'ready';
+      if(twigBme280_status==='connected')
+      {
+            this.#httpServer = new SensorServer({ sensor: bme280 })
+            this.#httpServer.start()
+            this.#sensorController = new SensorController({ sensor: bme280 })
+            this.#sensorController.startReadings()
+            this.startMqtt()
+            this.#state = 'ready';
+      }
+      else
+      {
+          trace("Can't start http sensor server because sensor state is: " + twigBme280_status + "\n");
+      }
 
       if(this.#bleServer){
         this.#bleServer.closeConnection();

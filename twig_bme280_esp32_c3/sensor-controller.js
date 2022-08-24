@@ -35,14 +35,14 @@ export default class SensorController {
   };
   sendHttpRequest = () => {
     let request = new Request({
-      host: "d4loldtp14yxm.cloudfront.net",
-      path: "/test/streams/sensor-stream/record",
+      host: 'ingestion.junipertechnology.co',
+      path: '/sensor-ingest',
       method: "PUT",
       port: 80,
       headers: ["Content-Type", "application/json"],
       body: JSON.stringify({
         Data: {
-          id: 3,
+          id: '188c1063-ce94-40ea-b98c-a7568796122a',
           timestamp: Date.now() / 1000,
           readings: [
             { name: "temp", value: this.sensor.temperature.toFixed(2), unit: "F" },
