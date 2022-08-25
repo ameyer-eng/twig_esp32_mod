@@ -1,3 +1,4 @@
+//import { trace } from "console";
 import I2C from "pins/i2c";
 import Timer from "timer";
 
@@ -54,7 +55,7 @@ class BME280 extends I2C {
     dig_H6: 0,
   };
 
-  constructor(dictionary = { address: I2C_ADDR_PRIM, sda: 3, scl: 6 }) {
+  constructor(dictionary = { address: I2C_ADDR_SEC, sda: 5, scl: 9}) {
     super(dictionary);
     dictionary.sca = 0;
     dictionary.scd = 2;
@@ -84,6 +85,7 @@ class BME280 extends I2C {
     let tryCount = 5;
 
     this.write(RESET_ADDR, SOFT_RESET_COMMAND);
+    trace("software reset write complete \n");
 
     do {
       Timer.delay(2);

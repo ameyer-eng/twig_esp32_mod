@@ -1,0 +1,71 @@
+{
+     "include": [
+       "$(MODDABLE)/examples/manifest_base.json",
+       "$(MODDABLE)/examples/manifest_net.json",
+       "$(MODULES)/files/preference/manifest.json",
+       "$(MODULES)/network/mdns/manifest.json",
+       "$(MODDABLE)/modules/crypt/tls.json",
+       "$(MODDABLE)/modules/pins/i2c/manifest.json",
+       "$(MODDABLE)/modules/network/mqtt/manifest.json",
+       "./express-js-mod/manifest.json",
+       "./improv-wifi-mod/manifest.json"
+     ],
+     "preload": [
+       "setup/target",
+       "http",
+       "express-js-mod/*",
+       "btutils",
+       "gap",
+       "improv-wifi-mod/*",
+       "led"
+     ],
+     "build":{
+            "ESP32_SUBCLASS": "esp32c3"
+        },
+    "platforms": {
+       "esp32/esp32c3": {
+           "defines": {
+               "i2c": {
+                   "interface": { "I2C": 0 },
+                   "sda": { "pin": 5, "port": "gpio3", "location": 6 },
+                   "scl": { "pin": 9, "port": "gpio6", "location": 20 }
+               },
+               "debugger": {
+                   "interface": { "USART": 0 },
+                   "location": 5,
+                   "tx" : { "pin": 0, "port": "gpioPortC" },
+                   "rx" : { "pin": 1, "port": "gpioPortC" }
+               }
+           }
+       }
+      },
+    "config": {
+           "led": {
+               "pin": 8,
+               "rainbow": true,
+               "brightness": 32
+           }
+       },
+        "defines": {
+            "i2c": {
+                "sda_pin": 4,
+                "scl_pin": 5
+             }
+     },
+     "modules": {
+       "*": ["./*", "./bme280", "./express-js-mod/*", "$(MODULES)/network/http/*"],
+       "express-js-mod/*": "./express-js-mod/*",
+       "pins/i2c": "$(MODDABLE)/modules/pins/i2c/i2c",
+          "setup/target": "./setup-target"
+     },
+
+     "ble": {
+       "*": ["./improv-wifi-mod/bleservices/*"]
+     },
+     "resources": {
+       "*": [
+         "$(MODULES)/crypt/data/ca222"
+       ]
+     }
+   
+}
